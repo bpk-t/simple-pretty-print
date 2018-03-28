@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>PPrint</title>
+</head>
+<body>
+  <h2>source<h2>
+  <textarea id="src" cols="160" rows="30"></textarea>
+  <br>
+  <h2>dest</h2>
+  <textarea id="dest" cols="160" rows="30"></textarea>
+
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script>
+    $(function(){
+      function addDest(text) {
+        $('#dest').val($('#dest').val() + text)
+      }
+      $('#src').on('input propertychange', function() {
+        let srcArray = Array.from($('#src').val())
+        let indent = 2
+
+        let initState = 0
+        let indentState = 1
+        var currentState = initState
+        var currentIndent = 0
+
+        $('#dest').val('')
+        for (var i in srcArray) {
+          var c = srcArray[i]
+
+          if (currentState == indentState) {
+            addDest(' '.repeat(currentIndent))
+            currentState = initState
+          }
+          switch(c) {
+            case ',':
+              addDest(c + '\r\n')
+              currentState = indentState
+            break;
+            
+            case '(':
+              addDest(c + '\r\n')
+              currentIndent += indent
+              currentState = indentState
+            break;
+            
+            case ')':
+              currentIndent -= indent
+              addDest('\r\n' + ' '.repeat(currentIndent))
+              addDest(c)
+            break;
+            default:
+              addDest(c)
+            break;
+          }
+        }
+      })
+    });
+  </script>
+</body>
+</html>
